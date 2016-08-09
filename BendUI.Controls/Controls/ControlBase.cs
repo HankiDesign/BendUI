@@ -56,7 +56,7 @@ namespace BendUI.Controls.Controls
 			PaintTransparentBackground(e);
 
 			// Draw each layer separately 
-			_layers.ForEach(x => x.Paint(e.Graphics, Size));
+			_layers.ForEach(x => x.Paint(e.Graphics, new Rectangle(0, 0, Size.Width, Size.Height)));
 		}
 
 		/// <summary>

@@ -35,8 +35,9 @@
 			// 
 			this.bendUIButton1.BackColor = System.Drawing.Color.DarkRed;
 			this.bendUIButton1.Location = new System.Drawing.Point(12, 12);
+			this.bendUIButton1.Margin = new System.Windows.Forms.Padding(0);
 			this.bendUIButton1.Name = "bendUIButton1";
-			this.bendUIButton1.Size = new System.Drawing.Size(318, 89);
+			this.bendUIButton1.Size = new System.Drawing.Size(842, 509);
 			this.bendUIButton1.TabIndex = 0;
 			this.bendUIButton1.Text = "bendUIButton1";
 			// 
@@ -44,7 +45,8 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(342, 113);
+			this.BackgroundImage = global::BendUI.Properties.Resources.YnrdaYQ;
+			this.ClientSize = new System.Drawing.Size(863, 530);
 			this.Controls.Add(this.bendUIButton1);
 			this.Name = "BendUITestForm";
 			this.ShowIcon = false;

@@ -9,7 +9,7 @@ namespace BendUI.Controls.Drawing
 {
 	public interface IDrawable
 	{
-		void Paint(Graphics graphics, SizeF size);
+		void Paint(Graphics graphics, Rectangle size);
 		void Resize();
 	}
 }

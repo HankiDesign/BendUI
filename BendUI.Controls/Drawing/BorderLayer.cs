@@ -12,6 +12,9 @@ namespace BendUI.Controls.Drawing
 	public class BorderLayer : UILayer
 	{
 		private BorderColoring _coloring;
+		private Pen _borderPen;
+		private Color _color;
+		private float _borderThickness;
 
 		public BorderLayer() : base(UILayerType.Border)
 		{
@@ -39,7 +42,15 @@ namespace BendUI.Controls.Drawing
 
 		[Category("Appearance")]
 		[Description("Solid color of the border")]
-		public Color Color { get; set; }
+		public Color Color
+		{
+			get { return _color; }
+			set
+			{
+				_color = value;
+				CreateTools();
+			}
+		}
 
 		[Category("Appearance")]
 		[Description("Corner radius in degrees")]
@@ -47,9 +58,22 @@ namespace BendUI.Controls.Drawing
 
 		[Category("Appearance")]
 		[Description("Thickness of the border in pixels")]
-		public double BorderThickness { get; set; }
+		public float BorderThickness 
+		{
+			get { return _borderThickness; }
 
-		public override void Paint(Graphics graphics, SizeF size)
+			set
+			{
+				_borderThickness = value;
+				CreateTools();
+			}
+		}
+
+		[Category("Distance")]
+		[Description("Distance of the border from the bounding rectangle of the parent control")]
+		public int Distance { get; set; }
+
+		public override void Paint(Graphics graphics, Rectangle bounds)
 		{
 			switch (_coloring)
 			{
@@ -58,7 +82,7 @@ namespace BendUI.Controls.Drawing
 					break;
 
 				case BorderColoring.Solid:
-					throw new NotImplementedException();
+					graphics.DrawRectangle(_borderPen, Rectangle.Inflate(bounds, -Distance, -Distance));
 					break;
 			}
 		}
@@ -71,6 +95,11 @@ namespace BendUI.Controls.Drawing
 		public override void Dispose()
 		{
 			throw new NotImplementedException();
+		}
+
+		public override void CreateTools()
+		{
+			_borderPen = new Pen(Color, BorderThickness);
 		}
 	}
 

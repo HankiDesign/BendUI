@@ -29,14 +29,10 @@ namespace BendUI.Controls.Drawing
 		/// </summary>
 		public int ZIndex { get; set; }
 
-		public abstract void Paint(Graphics graphics, SizeF size);
+		public abstract void Paint(Graphics graphics, Rectangle size);
 		public abstract void Resize();
 		public abstract void Dispose();
-
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException();
-		}
+		public abstract void CreateTools();
 	}
 
 	public enum UILayerType
