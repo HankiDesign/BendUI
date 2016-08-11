@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Plasmoid.Extensions;
 
 namespace BendUI.Controls.Drawing
 {
@@ -54,7 +55,7 @@ namespace BendUI.Controls.Drawing
 
 		[Category("Appearance")]
 		[Description("Corner radius in degrees")]
-		public double CornerRadius { get; set; }
+		public int CornerRadius { get; set; }
 
 		[Category("Appearance")]
 		[Description("Thickness of the border in pixels")]
@@ -69,6 +70,10 @@ namespace BendUI.Controls.Drawing
 			}
 		}
 
+		[Category("Appearance")]
+		[Description("Determines which corners, if any, of the rectangle are rounded")]
+		public RoundedCorners RoundedCorners { get; set; }
+
 		[Category("Distance")]
 		[Description("Distance of the border from the bounding rectangle of the parent control")]
 		public int Distance { get; set; }
@@ -82,7 +87,7 @@ namespace BendUI.Controls.Drawing
 					break;
 
 				case BorderColoring.Solid:
-					graphics.DrawRectangle(_borderPen, Rectangle.Inflate(bounds, -Distance, -Distance));
+					graphics.DrawRoundedRectangle(_borderPen, Rectangle.Inflate(bounds, -Distance, -Distance), CornerRadius, RoundedCorners);
 					break;
 			}
 		}

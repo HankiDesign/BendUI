@@ -52,6 +52,7 @@
     <Compile Include="Drawing\Gradient.cs" />
     <Compile Include="Drawing\IDrawable.cs" />
     <Compile Include="Drawing\UILayer.cs" />
+    <Compile Include="Extensions\GraphicsExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

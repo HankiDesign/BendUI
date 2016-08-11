@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -23,30 +24,40 @@ namespace BendUI.Controls.Controls
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		private List<UILayer> _layers;
+		private ObservableCollection<UILayer> _layers;
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public List<UILayer> Layers
+		public ObservableCollection<UILayer> Layers
 		{
 			get { return _layers; }
 
 			set 
 			{ 
 				_layers = value;
-				OrderLayers();
+				_layers.CollectionChanged += Layers_CollectionChanged;
 			}
 		}
 
 		protected ControlBase()
 		{
-			_layers = new List<UILayer>();
+			this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint |
+				  ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
+
+			_layers = new ObservableCollection<UILayer>();
+			_layers.CollectionChanged += Layers_CollectionChanged;
 		}
 
 		protected void OrderLayers()
 		{
-			_layers = _layers.OrderBy(x => x.ZIndex).ToList();
+			_layers = new ObservableCollection<UILayer>(_layers.OrderBy(x => x.ZIndex));
+			_layers.CollectionChanged += Layers_CollectionChanged;
+		}
+
+		private void Layers_CollectionChanged(object sender, EventArgs e)
+		{
+			OrderLayers();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -56,7 +67,10 @@ namespace BendUI.Controls.Controls
 			PaintTransparentBackground(e);
 
 			// Draw each layer separately 
-			_layers.ForEach(x => x.Paint(e.Graphics, new Rectangle(0, 0, Size.Width, Size.Height)));
+			foreach (var layer in _layers)
+			{
+				layer.Paint(e.Graphics, new Rectangle(0, 0, Size.Width, Size.Height));
+			}
 		}
 
 		/// <summary>

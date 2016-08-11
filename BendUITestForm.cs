@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BendUI.Controls.Drawing;
+using Plasmoid.Extensions;
 
 namespace BendUI
 {
@@ -17,36 +18,37 @@ namespace BendUI
 		{
 			InitializeComponent();
 
-			bendUIButton1.Layers.AddRange(
-				new[]
-				{
-					new BorderLayer
-					{
-						Color = Color.Blue,
-						Coloring = BorderColoring.Solid,
-						CornerRadius = 10,
-						Distance = 0,
-						BorderThickness = 10
-					},
+			bendUIButton1.Layers.Add(new BorderLayer
+			{
+				Color = Color.Blue,
+				Coloring = BorderColoring.Solid,
+				CornerRadius = 10,
+				Distance = 0,
+				BorderThickness = 20,
+				ZIndex = 0
+			});
 
-					new BorderLayer
-					{
-						Color = Color.Red,
-						Coloring = BorderColoring.Solid,
-						CornerRadius = 10,
-						Distance = 20,
-						BorderThickness = 10
-					},
+			bendUIButton1.Layers.Add(new BorderLayer
+			{
+				Color = Color.Red,
+				Coloring = BorderColoring.Solid,
+				CornerRadius = 40,
+				Distance = 90,
+				BorderThickness = 10,
+				ZIndex = 1,
+				RoundedCorners = RoundedCorners.BottomLeft | RoundedCorners.TopRight
+			});
 
-					new BorderLayer
-					{
-						Color = Color.Green,
-						Coloring = BorderColoring.Solid,
-						CornerRadius = 10,
-						Distance = 40,
-						BorderThickness = 10
-					},
-				});
+			bendUIButton1.Layers.Add(new BorderLayer
+			{
+				Color = Color.Green,
+				Coloring = BorderColoring.Solid,
+				CornerRadius = 100,
+				Distance = 5,
+				BorderThickness = 100,
+				ZIndex = -5,
+				RoundedCorners = RoundedCorners.BottomRight | RoundedCorners.TopLeft
+			});
 		}
 	}
 }
