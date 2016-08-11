@@ -59,15 +59,5 @@ namespace BendUI.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap YnrdaYQ {
-            get {
-                object obj = ResourceManager.GetObject("YnrdaYQ", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

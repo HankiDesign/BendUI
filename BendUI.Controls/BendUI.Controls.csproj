@@ -41,6 +41,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation\Easing\BackEase.cs" />
+    <Compile Include="Animation\Easing\BounceEase.cs" />
+    <Compile Include="Animation\Easing\CircleEase.cs" />
+    <Compile Include="Animation\Easing\CubicEase.cs" />
+    <Compile Include="Animation\Easing\EasingFunctionBase.cs" />
+    <Compile Include="Animation\Easing\EasingMode.cs" />
+    <Compile Include="Animation\Easing\ElasticEase.cs" />
+    <Compile Include="Animation\Easing\ExponentialEase.cs" />
+    <Compile Include="Animation\Easing\IEasingFunction.cs" />
+    <Compile Include="Animation\Easing\PowerEase.cs" />
+    <Compile Include="Animation\Easing\QuadraticEase.cs" />
+    <Compile Include="Animation\Easing\QuarticEase.cs" />
+    <Compile Include="Animation\Easing\QuinticEase.cs" />
     <Compile Include="Controls\BendUIButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -52,6 +65,7 @@
     <Compile Include="Drawing\Gradient.cs" />
     <Compile Include="Drawing\IDrawable.cs" />
     <Compile Include="Drawing\UILayer.cs" />
+    <Compile Include="Extensions\DoubleUtil.cs" />
     <Compile Include="Extensions\GraphicsExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

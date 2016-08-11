@@ -40,6 +40,22 @@ namespace BendUI.Controls.Controls
 			}
 		}
 
+		[Category("Appearance")]
+		[Description("Determines how many milliseconds the control is animated when the mouse cursor enters its bounds")]
+		public int MouseEnterTransitionDuration { get; set; }
+
+		[Category("Appearance")]
+		[Description("Determines how many milliseconds the control is animated when the mouse cursor leaves its bounds")]
+		public int MouseLeaveTransitionDuration { get; set; }
+
+		[Category("Appearance")]
+		[Description("Determines how many milliseconds the control is animated when the mouse cursor is pressed down")]
+		public int MouseDownTransitionDuration { get; set; }
+
+		[Category("Appearance")]
+		[Description("Determines how many milliseconds the control is animated when the mouse cursor is lifted up")]
+		public int MouseUpTransitionDuration { get; set; }
+
 		protected ControlBase()
 		{
 			this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint |
@@ -111,6 +127,13 @@ namespace BendUI.Controls.Controls
 		protected virtual void PaintBackground(Graphics graphics, Brush backgroundBrush, Rectangle backgroundRectangle)
 		{
 			graphics.FillRectangle(backgroundBrush, backgroundRectangle);
+		}
+
+		protected override void OnMouseEnter(EventArgs e)
+		{
+			base.OnMouseEnter(e);
+
+
 		}
 	}
 }
