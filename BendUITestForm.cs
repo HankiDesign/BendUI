@@ -20,35 +20,46 @@ namespace BendUI
 
 			bendUIButton1.Layers.Add(new BorderLayer
 			{
-				Color = Color.Blue,
+				DefaultColor = Color.Blue,
+				HoverColor = Color.Yellow,
 				Coloring = BorderColoring.Solid,
 				CornerRadius = 10,
 				Distance = 0,
 				BorderThickness = 20,
-				ZIndex = 0
+				ZIndex = 0,
+				Parent = bendUIButton1
 			});
 
 			bendUIButton1.Layers.Add(new BorderLayer
 			{
-				Color = Color.Red,
+				DefaultColor = Color.Red,
+				HoverColor = Color.Yellow,
 				Coloring = BorderColoring.Solid,
 				CornerRadius = 40,
 				Distance = 90,
 				BorderThickness = 10,
 				ZIndex = 1,
-				RoundedCorners = RoundedCorners.BottomLeft | RoundedCorners.TopRight
+				RoundedCorners = RoundedCorners.BottomLeft | RoundedCorners.TopRight,
+				Parent = bendUIButton1
 			});
 
 			bendUIButton1.Layers.Add(new BorderLayer
 			{
-				Color = Color.Green,
+				DefaultColor = Color.Green,
+				HoverColor = Color.Yellow,
 				Coloring = BorderColoring.Solid,
 				CornerRadius = 100,
 				Distance = 5,
 				BorderThickness = 100,
 				ZIndex = -5,
-				RoundedCorners = RoundedCorners.BottomRight | RoundedCorners.TopLeft
+				RoundedCorners = RoundedCorners.BottomRight | RoundedCorners.TopLeft,
+				Parent = bendUIButton1
 			});
+		}
+
+		private void BendUITestForm_Load(object sender, EventArgs e)
+		{
+			
 		}
 	}
 }

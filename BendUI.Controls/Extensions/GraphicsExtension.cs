@@ -66,7 +66,7 @@ namespace Plasmoid.Extensions
 				return path;
 			}
 
-			if (radius >= (Math.Min(rectangle.Width, rectangle.Height))/2.0)
+			if (radius >= (Math.Min(rectangle.Width, rectangle.Height))/3)
 				return graphics.GenerateCapsule(rectangle);
 
 			var diameter = radius * 2.0F;

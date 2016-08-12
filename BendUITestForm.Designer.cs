@@ -37,8 +37,21 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.bendUIButton1.BackColor = System.Drawing.Color.DarkRed;
+			this.bendUIButton1.IsAnimated = false;
 			this.bendUIButton1.Location = new System.Drawing.Point(12, 12);
 			this.bendUIButton1.Margin = new System.Windows.Forms.Padding(0);
+			this.bendUIButton1.MouseDownEasingFunction = BendUI.Controls.Animation.Easing.EasingFunction.PowerEase;
+			this.bendUIButton1.MouseDownEasingMode = BendUI.Controls.Animation.Easing.EasingMode.EaseOut;
+			this.bendUIButton1.MouseDownTransitionDuration = 500;
+			this.bendUIButton1.MouseEnterEasingFunction = BendUI.Controls.Animation.Easing.EasingFunction.BackEase;
+			this.bendUIButton1.MouseEnterEasingMode = BendUI.Controls.Animation.Easing.EasingMode.EaseIn;
+			this.bendUIButton1.MouseEnterTransitionDuration = 0;
+			this.bendUIButton1.MouseLeaveEasingFunction = BendUI.Controls.Animation.Easing.EasingFunction.BackEase;
+			this.bendUIButton1.MouseLeaveEasingMode = BendUI.Controls.Animation.Easing.EasingMode.EaseIn;
+			this.bendUIButton1.MouseLeaveTransitionDuration = 0;
+			this.bendUIButton1.MouseUpEasingFunction = BendUI.Controls.Animation.Easing.EasingFunction.BackEase;
+			this.bendUIButton1.MouseUpEasingMode = BendUI.Controls.Animation.Easing.EasingMode.EaseIn;
+			this.bendUIButton1.MouseUpTransitionDuration = 0;
 			this.bendUIButton1.Name = "bendUIButton1";
 			this.bendUIButton1.Size = new System.Drawing.Size(842, 509);
 			this.bendUIButton1.TabIndex = 0;
@@ -53,6 +66,7 @@
 			this.Name = "BendUITestForm";
 			this.ShowIcon = false;
 			this.Text = "BendUI Test";
+			this.Load += new System.EventHandler(this.BendUITestForm_Load);
 			this.ResumeLayout(false);
 
 		}

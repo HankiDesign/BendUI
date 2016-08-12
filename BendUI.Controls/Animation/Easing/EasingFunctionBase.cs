@@ -57,4 +57,18 @@ namespace BendUI.Controls.Animation.Easing
 		/// </remarks>
 		protected abstract double EaseInCore(double normalizedTime);
 	}
+
+	public enum EasingFunction
+	{
+		BackEase,
+		BounceEase,
+		CircleEase,
+		CubicEase,
+		ElasticEase,
+		ExponentialEase,
+		PowerEase,
+		QuadraticEase,
+		QuarticEase,
+		QuinticEase
+	}
 }

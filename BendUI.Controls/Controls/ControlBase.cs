@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BendUI.Controls.Drawing;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using BendUI.Controls.Drawing;
+using BendUI.Controls.Animation.Easing;
 
 namespace BendUI.Controls.Controls
 {
@@ -20,6 +18,30 @@ namespace BendUI.Controls.Controls
 	public abstract class ControlBase : Control
 	{
 		private MethodInfo _transparentBGMethod;
+		private Timer _transitionTimer;
+		private int _currentTransitionTime = 0; // Determines for how long the current transition animation has run
+		private int _currentTransitionEndTime = 0; // How many milliseconds the transition runs to be completed
+		private double _transitionPercentage = 0; // This is calculated for each transition update so that all the layers can use the value
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public ControlState NextState { get; set; }
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public ControlState PreviousState { get; set; }
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool TransitioningState { get; set; }
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool IsTransitioning { get; set; }
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -40,29 +62,126 @@ namespace BendUI.Controls.Controls
 			}
 		}
 
-		[Category("Appearance")]
+		public bool IsAnimated { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing mode to be used for state transition animation when the mouse cursor enters the control")]
+		public EasingMode MouseEnterEasingMode { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing mode to be used for state transition animation when the mouse cursor leaves the control")]
+		public EasingMode MouseLeaveEasingMode { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing mode to be used for state transition animation when the mouse cursor clicks down on the control")]
+		public EasingMode MouseDownEasingMode { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing mode to be used for state transition animation when the mouse cursor's click is let go on the control")]
+		public EasingMode MouseUpEasingMode { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing mode to be used for state transition animation when the control is disabled")]
+		public int DisabledEasingMode { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing mode to be used for state transition animation when the control is returning to the default (unfocused and enabled) state")]
+		public int DefaultEasingMode { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing function to be used for state transition animation when the mouse cursor enters the control")]
+		public EasingFunction MouseEnterEasingFunction { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing function to be used for state transition animation when the mouse cursor leaves the control")]
+		public EasingFunction MouseLeaveEasingFunction { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing function to be used for state transition animation when the mouse cursor clicks down on the control")]
+		public EasingFunction MouseDownEasingFunction { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing function to be used for state transition animation when the mouse cursor's click is let go on the control")]
+		public EasingFunction MouseUpEasingFunction { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing function to be used for state transition animation when the control is disabled")]
+		public EasingFunction DisabledEasingFunction { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines the easing function to be used for state transition animation when the control is returning to the default (unfocused and enabled) state")]
+		public EasingFunction DefaultEasingFunction { get; set; }
+
+		[Category("Animation")]
 		[Description("Determines how many milliseconds the control is animated when the mouse cursor enters its bounds")]
 		public int MouseEnterTransitionDuration { get; set; }
 
-		[Category("Appearance")]
+		[Category("Animation")]
 		[Description("Determines how many milliseconds the control is animated when the mouse cursor leaves its bounds")]
 		public int MouseLeaveTransitionDuration { get; set; }
 
-		[Category("Appearance")]
+		[Category("Animation")]
 		[Description("Determines how many milliseconds the control is animated when the mouse cursor is pressed down")]
 		public int MouseDownTransitionDuration { get; set; }
 
-		[Category("Appearance")]
+		[Category("Animation")]
 		[Description("Determines how many milliseconds the control is animated when the mouse cursor is lifted up")]
 		public int MouseUpTransitionDuration { get; set; }
 
+		[Category("Animation")]
+		[Description("Determines how many milliseconds the control is animated when it's disabled")]
+		public int DisabledTransitionDuration { get; set; }
+
+		[Category("Animation")]
+		[Description("Determines how many milliseconds the control is animated when it's returning to the default (unfocused and enabled) state")]
+		public int DefaultTransitionDuration { get; set; }
+
 		protected ControlBase()
 		{
-			this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint |
+			SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint |
 				  ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
+
+			SetUpTransitionTools();
 
 			_layers = new ObservableCollection<UILayer>();
 			_layers.CollectionChanged += Layers_CollectionChanged;
+
+			// Set defaults
+			NextState = this.Enabled ? ControlState.Default : ControlState.Disabled;
+		}
+
+		protected void SetUpTransitionTools()
+		{
+			_transitionTimer = new Timer
+			{
+				Interval = 1
+			};
+
+			_transitionTimer.Tick += TransitionTimer_Tick;
+		}
+
+		void TransitionTimer_Tick(object sender, EventArgs e)
+		{
+			if (_currentTransitionTime < _currentTransitionEndTime)
+			{
+				_currentTransitionTime++;
+				_transitionPercentage = (double)_currentTransitionTime/_currentTransitionEndTime;
+
+				// Draw each layer separately 
+				foreach (var layer in _layers)
+				{
+					layer.RefreshDrawingTools((int)_transitionPercentage*100);
+				}
+
+				// Force the control to redraw itself
+				Invalidate();
+			}
+
+			else
+			{
+				_transitionTimer.Stop();
+				IsTransitioning = false;
+			}
 		}
 
 		protected void OrderLayers()
@@ -133,7 +252,65 @@ namespace BendUI.Controls.Controls
 		{
 			base.OnMouseEnter(e);
 
-
+			TransitionState(NextState, ControlState.MouseEntered);
 		}
+
+		protected void TransitionState(ControlState oldState, ControlState newState)
+		{
+			// Do nothing, if the state doesn't change
+			if (oldState == newState) return;
+
+			IsTransitioning = true;
+
+			// New transition is starting, set the time to 0 and get the max time depending on newState
+			_currentTransitionTime = 0;
+
+			// Get the transition animation length depending on the state the control is transitioning to
+			switch (newState)
+			{
+				case ControlState.Disabled:
+					_currentTransitionEndTime = DisabledTransitionDuration;
+					break;
+
+				case ControlState.Default:
+					_currentTransitionEndTime = DefaultTransitionDuration;
+					break;
+
+				case ControlState.MouseEntered:
+					_currentTransitionEndTime = MouseEnterTransitionDuration;
+					break;
+
+				case ControlState.MouseDown:
+					_currentTransitionEndTime = MouseDownTransitionDuration;
+					break;
+
+				case ControlState.MouseUp:
+					_currentTransitionEndTime = MouseUpTransitionDuration;
+					break;
+
+				case ControlState.MouseLeft:
+					_currentTransitionEndTime = MouseLeaveTransitionDuration;
+					break;
+			}
+
+			_transitionTimer.Start();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			_transitionTimer.Tick -= TransitionTimer_Tick;
+		}
+	}
+
+	public enum ControlState
+	{
+		Disabled,
+		Default,
+		MouseEntered,
+		MouseDown,
+		MouseUp,
+		MouseLeft
 	}
 }

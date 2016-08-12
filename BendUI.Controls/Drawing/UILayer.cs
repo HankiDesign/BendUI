@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using BendUI.Controls.Controls;
 
 namespace BendUI.Controls.Drawing
 {
@@ -16,6 +17,23 @@ namespace BendUI.Controls.Drawing
 	/// </summary>
 	public abstract class UILayer : IDrawable, IDisposable
 	{
+		private ControlBase _parent;
+
+		public ControlBase Parent
+		{
+			get { return this._parent; }
+			set
+			{
+				this._parent = value;
+			}
+		}
+
+		protected UILayer(UILayerType layerType, ControlBase parent)
+		{
+			LayerType = layerType;
+			Parent = parent;
+		}
+
 		protected UILayer(UILayerType layerType)
 		{
 			LayerType = layerType;
@@ -32,7 +50,8 @@ namespace BendUI.Controls.Drawing
 		public abstract void Paint(Graphics graphics, Rectangle size);
 		public abstract void Resize();
 		public abstract void Dispose();
-		public abstract void CreateTools();
+		public abstract void StartTransition(ControlState start, ControlState end);
+		public abstract void RefreshDrawingTools(int currentPercentage);
 	}
 
 	public enum UILayerType

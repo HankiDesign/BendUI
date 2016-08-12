@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BendUI.Controls.Controls;
+using BendUI.Controls.Extensions;
 using Plasmoid.Extensions;
 
 namespace BendUI.Controls.Drawing
@@ -14,12 +16,26 @@ namespace BendUI.Controls.Drawing
 	{
 		private BorderColoring _coloring;
 		private Pen _borderPen;
+		private Color _previousColor;
 		private Color _color;
+		private Color _defaultColor;
+		private Color _disabledColor;
+		private Color _hoverColor;
+		private Color _downColor;
 		private float _borderThickness;
+		private ControlState _previousState;
+		private ControlState _nextState;
+		private Color _nextColor;
 
-		public BorderLayer() : base(UILayerType.Border)
+		public BorderLayer(ControlBase parent) : base(UILayerType.Border, parent)
 		{
 			
+		}
+
+		public BorderLayer()
+			: base(UILayerType.Border)
+		{
+
 		}
 
 		[Category("Appearance")]
@@ -43,13 +59,49 @@ namespace BendUI.Controls.Drawing
 
 		[Category("Appearance")]
 		[Description("Solid color of the border")]
-		public Color Color
+		public Color DefaultColor
 		{
-			get { return _color; }
+			get { return _defaultColor; }
 			set
 			{
-				_color = value;
-				CreateTools();
+				_defaultColor = value;
+				RefreshDrawingTools(0);
+			}
+		}
+
+		[Category("Appearance")]
+		[Description("Solid color of the disabled border")]
+		public Color DisabledColor
+		{
+			get { return _disabledColor; }
+			set
+			{
+				_disabledColor = value;
+				RefreshDrawingTools(0);
+			}
+		}
+
+		[Category("Appearance")]
+		[Description("Solid color of the border being hovered by the mouse cursor")]
+		public Color HoverColor
+		{
+			get { return _hoverColor; }
+			set
+			{
+				_hoverColor = value;
+				RefreshDrawingTools(0);
+			}
+		}
+
+		[Category("Appearance")]
+		[Description("Solid color of the border when the mouse cursor is down")]
+		public Color DownColor
+		{
+			get { return _downColor; }
+			set
+			{
+				_downColor = value;
+				RefreshDrawingTools(0);
 			}
 		}
 
@@ -66,7 +118,7 @@ namespace BendUI.Controls.Drawing
 			set
 			{
 				_borderThickness = value;
-				CreateTools();
+				RefreshDrawingTools(0);
 			}
 		}
 
@@ -102,9 +154,54 @@ namespace BendUI.Controls.Drawing
 			throw new NotImplementedException();
 		}
 
-		public override void CreateTools()
+		// When animating transitions, drawing tools will be refreshed every millisecond
+		public override void RefreshDrawingTools(int currentPercentage)
 		{
-			_borderPen = new Pen(Color, BorderThickness);
+			if (currentPercentage == 0)
+			{
+				_color = DefaultColor;
+				_borderPen = new Pen(_color, BorderThickness);
+			}
+
+			// If the transition is going on, the colors have most likely changed and the Pen needs to be recreated.
+			if (!Parent.IsAnimated || !Parent.IsTransitioning) return;
+
+			_color = ColorExtensions.LerpRGB(_previousColor, _nextColor, currentPercentage);
+			_borderPen = new Pen(_color, BorderThickness);
+		}
+
+		public override void StartTransition(ControlState start, ControlState end)
+		{
+			_previousState = start;
+			_nextState = end;
+			_previousColor = _color;
+
+			switch (_nextState)
+			{
+				case ControlState.Disabled:
+					_nextColor = DisabledColor;
+					break;
+
+				case ControlState.Default:
+					_nextColor = DefaultColor;
+					break;
+
+				case ControlState.MouseEntered:
+					_nextColor = HoverColor;
+					break;
+
+				case ControlState.MouseDown:
+					_nextColor = DownColor;
+					break;
+
+				case ControlState.MouseUp:
+					_nextColor = HoverColor;
+					break;
+
+				case ControlState.MouseLeft:
+					_nextColor = DefaultColor;
+					break;
+			}
 		}
 	}
 
