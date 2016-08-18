@@ -21,7 +21,7 @@ namespace BendUI.Controls.Controls
 		private Timer _transitionTimer;
 		private int _currentTransitionTime = 0; // Determines for how long the current transition animation has run
 		private int _currentTransitionEndTime = 0; // How many milliseconds the transition runs to be completed
-		private double _transitionPercentage = 0; // This is calculated for each transition update so that all the layers can use the value
+		private float _transitionPercentage = 0; // This is calculated for each transition update so that all the layers can use the value
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -165,12 +165,12 @@ namespace BendUI.Controls.Controls
 			if (_currentTransitionTime < _currentTransitionEndTime)
 			{
 				_currentTransitionTime++;
-				_transitionPercentage = (double)_currentTransitionTime/_currentTransitionEndTime;
+				_transitionPercentage = (float)_currentTransitionTime/_currentTransitionEndTime;
 
 				// Draw each layer separately 
 				foreach (var layer in _layers)
 				{
-					layer.RefreshDrawingTools((int)_transitionPercentage*100);
+					layer.RefreshDrawingTools(_transitionPercentage);
 				}
 
 				// Force the control to redraw itself
@@ -255,6 +255,27 @@ namespace BendUI.Controls.Controls
 			TransitionState(NextState, ControlState.MouseEntered);
 		}
 
+		protected override void OnMouseLeave(EventArgs e)
+		{
+			base.OnMouseLeave(e);
+
+			TransitionState(NextState, ControlState.MouseLeft);
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			base.OnMouseDown(e);
+
+			TransitionState(NextState, ControlState.MouseDown);
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			base.OnMouseUp(e);
+
+			TransitionState(NextState, ControlState.MouseUp);
+		}
+
 		protected void TransitionState(ControlState oldState, ControlState newState)
 		{
 			// Do nothing, if the state doesn't change
@@ -291,6 +312,11 @@ namespace BendUI.Controls.Controls
 				case ControlState.MouseLeft:
 					_currentTransitionEndTime = MouseLeaveTransitionDuration;
 					break;
+			}
+
+			foreach (var layer in _layers)
+			{
+				layer.StartTransition(oldState, newState);
 			}
 
 			_transitionTimer.Start();

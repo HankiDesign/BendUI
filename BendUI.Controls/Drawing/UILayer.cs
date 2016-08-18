@@ -51,7 +51,7 @@ namespace BendUI.Controls.Drawing
 		public abstract void Resize();
 		public abstract void Dispose();
 		public abstract void StartTransition(ControlState start, ControlState end);
-		public abstract void RefreshDrawingTools(int currentPercentage);
+		public abstract void RefreshDrawingTools(float currentPercentage);
 	}
 
 	public enum UILayerType

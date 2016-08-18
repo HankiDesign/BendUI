@@ -155,7 +155,7 @@ namespace BendUI.Controls.Drawing
 		}
 
 		// When animating transitions, drawing tools will be refreshed every millisecond
-		public override void RefreshDrawingTools(int currentPercentage)
+		public override void RefreshDrawingTools(float currentPercentage)
 		{
 			if (currentPercentage == 0)
 			{
